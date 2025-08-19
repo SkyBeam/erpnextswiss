@@ -11,7 +11,6 @@ from erpnextswiss.erpnextswiss.edi import download_pricat, download_desadv, get_
 from erpnextswiss.erpnextswiss.attach_pdf import create_folder
 from frappe.utils import cint
 from frappe.utils.file_manager import save_file
-from frappe.email.queue import flush
 
 class EDIFile(Document):
     def on_submit(self):
@@ -118,11 +117,11 @@ class EDIFile(Document):
                     is_private=True
                 )
                 # send mail
-                send(
-                    recipients=frappe.get_value("EDI Connection", self.edi_connection, "email_recipient"),
-                    subject=self.name,
-                    message=self.name,
-                    reference_doctype="EDI File",
+                frappe.sendmail(
+                    recipients=frappe.get_value("EDI Connection", self.edi_connection, "email_recipient"), 
+                    subject=self.name, 
+                    message=self.name, 
+                    reference_doctype="EDI File", 
                     reference_name=self.name,
                     attachments=[{'fid': f.name}]
                 )
