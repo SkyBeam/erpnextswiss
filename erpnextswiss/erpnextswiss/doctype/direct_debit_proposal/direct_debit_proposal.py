@@ -51,10 +51,9 @@ class DirectDebitProposal(Document):
                 if sinv.amount != sinv.outstanding_amount:
                     if not self.skonto_account or not self.skonto_cost_center:
                         frappe.throw( _("Please provide a skonto account and cost center.") )
-                        
     def on_submit(self):
         # clean payments (to prevent accumulation on re-submit)
-        self.set("payments", [])
+        self.payments = {}
         # create the aggregated payment table
         # collect customers
         customers = []
@@ -148,8 +147,7 @@ class DirectDebitProposal(Document):
         inserted_payment_entry.submit()
         frappe.db.commit()
         return inserted_payment_entry
-    
-    @frappe.whitelist()                 # note: v15 requires whitelist also on class functions
+            
     def create_bank_file(self):
         # create xml header
         content = make_line("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
