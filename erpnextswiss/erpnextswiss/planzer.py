@@ -8,7 +8,8 @@ from frappe.utils.password import get_decrypted_password
 import os
 import codecs
 from datetime import datetime, timedelta
-import pysftp
+import paramiko
+# import pysftp
 
 @frappe.whitelist()
 def create_shipment(shipment_name, debug=False):
@@ -193,28 +194,27 @@ def upload_shipment_file(file_name, target_path):
         frappe.throw( _("Planzer Settings are missing connection details (host, username, password)") )
 
     try:
-        with connect_sftp(settings) as sftp:
-            with sftp.cd(target_path):          # e.g. "Eingang"
-                sftp.put(file_name)            # upload file
+        # SSH Client.
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # Automatically add host keys (not secure for production)
+        if (settings.get('host_keys')):
+            # Needs refinement. Perhaps the keys need to be parsed for type
+            hostKeys = ssh.get_host_keys()
+            hostKeys.add(settings.get('host'. "rsa", settings.get('host_keys'))
+    
+        # Connect.
+        ssh.connect(hostname=settings.get('host'), pport=settings.get('port') or 22, username=settings.get('username'), password=get_decrypted_password(settings.get('doctype'), settings.get('name'), 'password', False))
+    
+        # Get SFTP client.
+        sftp = ssh.open_sftp()
+
+        # Upload file.
+        sftp.put(file_name, target_path + "/" + file_name)
                 
     except Exception as err:
         frappe.log_error( err, "Planzer Upload Shipment File Failed")
         
     return
-
-def connect_sftp(settings):
-    cnopts = pysftp.CnOpts()
-    cnopts.hostkeys = settings.get('host_keys') or None        # keep or None to push None instead of ""  
-    
-    connection = pysftp.Connection(
-            settings.get('host'), 
-            port=settings.get('port') or 22,
-            username=settings.get('username'), 
-            password=get_decrypted_password(settings.get('doctype'), settings.get('name'), 'password', False),
-            cnopts=cnopts
-        )
-    
-    return connection
 
 """
 Extract the numeric part of the shipment
@@ -236,5 +236,4 @@ def get_planzer_qr_code(shipment_name):
     qr_code = "{barcode}{blank}8888888".format(
         barcode=get_planzer_barcode(shipment_name),
         blank=" " * 42
-    )
-    return qr_code
+    )    return qr_code
