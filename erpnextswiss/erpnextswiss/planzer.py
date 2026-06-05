@@ -9,7 +9,6 @@ import os
 import codecs
 from datetime import datetime, timedelta
 import paramiko
-# import pysftp
 
 @frappe.whitelist()
 def create_shipment(shipment_name, debug=False):
@@ -203,7 +202,7 @@ def upload_shipment_file(file_name, target_path):
             hostKeys.add(settings.get('host'), "rsa", settings.get('host_keys'))
     
         # Connect.
-        ssh.connect(hostname=settings.get('host'), pport=settings.get('port') or 22, username=settings.get('username'), password=get_decrypted_password(settings.get('doctype'), settings.get('name'), 'password', False))
+        ssh.connect(hostname=settings.get('host'), port=settings.get('port') or 22, username=settings.get('username'), password=get_decrypted_password(settings.get('doctype'), settings.get('name'), 'password', False))
     
         # Get SFTP client.
         sftp = ssh.open_sftp()
@@ -236,4 +235,5 @@ def get_planzer_qr_code(shipment_name):
     qr_code = "{barcode}{blank}8888888".format(
         barcode=get_planzer_barcode(shipment_name),
         blank=" " * 42
-    )    return qr_code
+    )
+    return qr_code
