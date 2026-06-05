@@ -15,6 +15,7 @@ dependencies = [
     "unidecode",
     "opencv-python",
     "pymupdf",
+    "paramiko",
     "fintech",
     "icalendar",
     "lxml",
