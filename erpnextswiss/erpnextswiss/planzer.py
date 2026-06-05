@@ -200,7 +200,7 @@ def upload_shipment_file(file_name, target_path):
         if (settings.get('host_keys')):
             # Needs refinement. Perhaps the keys need to be parsed for type
             hostKeys = ssh.get_host_keys()
-            hostKeys.add(settings.get('host'. "rsa", settings.get('host_keys'))
+            hostKeys.add(settings.get('host'), "rsa", settings.get('host_keys'))
     
         # Connect.
         ssh.connect(hostname=settings.get('host'), pport=settings.get('port') or 22, username=settings.get('username'), password=get_decrypted_password(settings.get('doctype'), settings.get('name'), 'password', False))
