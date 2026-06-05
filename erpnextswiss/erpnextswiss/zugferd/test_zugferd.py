@@ -17,7 +17,7 @@ try:
     from facturx import generate_from_binary
 except:
     from facturx import generate_facturx_from_binary as generate_from_binary
-from erpnextswiss.erpnextswiss.zugferd.zugferd import import_pdf, get_facturx_xml_from_pdf, xml_check_xsd
+from erpnextswiss.erpnextswiss.zugferd.zugferd import import_pdf
 from PyPDF4 import PdfFileReader
 
 class TestZugferd(unittest.TestCase):
