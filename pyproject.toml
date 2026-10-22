@@ -21,7 +21,8 @@ dependencies = [
     "icalendar",
     "lxml",
     "paramiko<4",
-    "PyPika @  git+https://github.com/frappe/pypika@7ef6e40215d46cd531e8c4e58650b84c11abbd04"
+    "PyPika @  git+https://github.com/frappe/pypika@7ef6e40215d46cd531e8c4e58650b84c11abbd04",
+    "gunicorn @ git+https://github.com/frappe/gunicorn@bb554053bb87218120d76ab6676af7015680e8b6"
 ]
 
 [project.urls]
